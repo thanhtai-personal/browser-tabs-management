@@ -4,7 +4,7 @@ A JS library for browser/tab management system.
 **Version 0.0.2** 
 
 ## How it works
-With plain JavaScript cast the `window-tabs-management` function with the tab's class selector as the first argument:
+
 ```javascript
 import TabManagerWrapper from 'window-tabs-management'
 import React from 'react'

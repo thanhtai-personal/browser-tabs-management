@@ -1,11 +1,11 @@
 {
-  "name": "@demonking/window-tabs-management",
+  "name": "window-tabs-management",
   "author": {
     "name": "Demon King",
-    "url": "https://github.com/gionatan-lombardi"
+    "url": "https://github.com/thanhtai-personal"
   },
   "description": "manage tabs and browser is opened by your application.",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main": "src/index.js",
   "repository": {
     "type": "git",
