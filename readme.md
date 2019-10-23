@@ -1,10 +1,7 @@
 # tabs-manager-light
-A lightweight JS script for tab management. 
+A JS library for browser/tab management system. 
 
-**Version 2.0.0**  
-jQuery requirements removed.
-
-Based on Remy Sharp's post, ["How tabs should work"](https://24ways.org/2015/how-tabs-should-work/)
+**Version 0.0.2** 
 
 ## How it works
 With plain JavaScript cast the `window-tabs-management` function with the tab's class selector as the first argument:
@@ -72,9 +69,9 @@ export default TabManagerWrapper(HelloWorld, defaultTabData)
 That's all of my first npm package :).
 
 **Note.**
---- TabManagerWrapper helped you to create tab data when you load your component and then remove tab data when you close your tab.
-Then if you use TabManagerWrapper, you have not to do it again.
---- Better if you use TabManagerWrapper to wrap your root component.
+** TabManagerWrapper helped you to create tab data when you load your component and then remove tab data when you close your tab.
+Then if you use TabManagerWrapper, you have not to do it again.**
+** Better if you use TabManagerWrapper to wrap your root component. **
 **Have fun.**
 
 ## Borwsers support
