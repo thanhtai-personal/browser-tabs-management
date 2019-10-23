@@ -1,4 +1,5 @@
-import { PureComponent } from 'react'
+import React, { PureComponent } from 'react'
+import ReactDOM from 'react-dom'
 import TabManager from './tabManager'
 
 const TabManagerWrapper = (ComposedComponent, tabData) => {
@@ -15,8 +16,14 @@ const TabManagerWrapper = (ComposedComponent, tabData) => {
       })
     }
 
+    componentWillUnmount () {
+      document.removeEventListener('onbeforeunload', () => {
+        this.tabManager.removeTab(this.tabData.id)
+      })
+    }
+
     render () {
-      return <ComposedComponent tabData={this.tabData} tabManager={this.tabManager} {...this.props} />
+      return (<ComposedComponent tabData={this.tabData} tabManager={this.tabManager} {...this.props} />)
     }
   }
 

@@ -1,4 +1,4 @@
-# tabs-manager-light
+# browsers/tabs-manager
 A JS library for browser/tab management system. 
 
 **Version 0.0.2** 
