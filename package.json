@@ -5,7 +5,7 @@
     "url": "https://github.com/gionatan-lombardi"
   },
   "description": "manage tabs and browser is opened by your application.",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "src/index.js",
   "repository": {
     "type": "git",
