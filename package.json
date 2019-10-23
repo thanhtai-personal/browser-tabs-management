@@ -6,13 +6,18 @@
   },
   "description": "manage tabs and browser is opened by your application.",
   "version": "0.0.6",
-  "main": "src/index.js",
+  "main": "src/app.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/thanhtai-personal/browser-tabs-management.git"
   },
   "bugs": {
     "url": "https://github.com/thanhtai-personal/browser-tabs-management/issues"
+  },
+  "scripts": {
+    "start": "webpack-dev-server --mode development",
+    "build": "webpack-dev-server --mode production",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
     "JavaScript",
