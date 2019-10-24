@@ -2,6 +2,7 @@
 .idea
 .c9/
 .vscode
+node_modules/
 dist/
 yarn.lock
 package-lock.json
