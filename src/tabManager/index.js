@@ -5,13 +5,12 @@ const TabManagement = () => {
     privateKeys: ['id']
   }
 
-  let data = JSON.parse(window.localStorage.getItem(dataKeys.tabsManagement))
-  let tabList = []
-  if (data && data.tabList) {
-    tabList = data.tabList
-  }
-
   const getTabList = () => {
+    let data = JSON.parse(window.localStorage.getItem(dataKeys.tabsManagement))
+    let tabList = []
+    if (data && data.tabList) {
+      tabList = data.tabList
+    }
     return tabList
   }
 
@@ -24,23 +23,25 @@ const TabManagement = () => {
         if (!dataKeys.privateKeys.includes(key)) tabData[key] = data[key]
       })
     }
+    let tabList = getTabList()
     tabList.push(tabData)
     window.localStorage.setItem(dataKeys.tabsManagement, JSON.stringify({ ...JSON.parse(window.localStorage.getItem(dataKeys.tabsManagement)), tabList: tabList }))
     return tabData
   }
 
   const removeTab = (id) => {
+    let tabList = getTabList()
     let tabIndex = tabList.findIndex((tab) => tab.id === id)
     if (tabIndex >= 0) tabList.splice(tabIndex, 1)
-    tabList.push(tabData)
     window.localStorage.setItem(dataKeys.tabsManagement, JSON.stringify({ ...JSON.parse(window.localStorage.getItem(dataKeys.tabsManagement)), tabList: tabList }))
   } 
 
   const getTab = (id) => {
-    return tabList.find((tab) => tab.id === id)
+    return getTabList().find((tab) => tab.id === id)
   }
 
   const setTab = (id, data) => {
+    let tabList = getTabList()
     let tabIndex = tabList.findIndex((tab) => tab.id === id)
     if (tabIndex >= 0) {
       let tab = Object.assign({}, tabList[tabIndex])
