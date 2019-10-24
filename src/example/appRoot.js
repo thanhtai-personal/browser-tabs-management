@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import TabManagerWrapper from './index'
+import { TabManagerWrapper } from '../index'
 
 class AppRoot extends Component {
   render () {

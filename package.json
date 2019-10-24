@@ -5,7 +5,7 @@
     "url": "https://github.com/thanhtai-personal"
   },
   "description": "manage tabs and browser is opened by your application.",
-  "version": "1.0.0",
+  "version": "1.1.5",
   "main": "dist/index.js",
   "repository": {
     "type": "git",
@@ -15,9 +15,7 @@
     "url": "https://github.com/thanhtai-personal/browser-tabs-management/issues"
   },
   "scripts": {
-    "start": "webpack-dev-server --mode development",
-    "build": "webpack --mode production",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prepublishOnly": "babel ./src --out-dir ./dist -s inline"
   },
   "keywords": [
     "JavaScript",
@@ -27,24 +25,22 @@
     "tabs manager",
     "windows manager"
   ],
+  "peerDependencies": {
+    "react": "^16.11.0",
+    "react-dom": "^16.11.0"
+  },
   "dependencies": {
     "react": "^16.11.0",
     "react-dom": "^16.11.0"
   },
   "devDependencies": {
+    "@babel/cli": "^7.6.4",
     "@babel/core": "^7.6.4",
     "@babel/preset-env": "^7.6.3",
-    "@babel/preset-react": "^7.6.3",
-    "babel-loader": "^8.0.6",
-    "webpack": "^4.41.2",
-    "webpack-cli": "^3.3.9",
-    "webpack-dev-server": "^3.9.0"
+    "@babel/preset-react": "^7.6.3"
   },
-  "license": "MIT",
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "https://www.opensource.org/licenses/mit-license.php"
-    }
-  ]
+  "files": [
+    "dist/*"
+  ],
+  "license": "ISC"
 }

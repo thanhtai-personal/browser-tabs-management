@@ -4,3 +4,8 @@
 .vscode
 node_modules/
 dist/
+yarn.lock
+package-lock.json
+node_modules/js-tokens/package.json
+node_modules/loose-envify/package.json
+node_modules/react/package.json

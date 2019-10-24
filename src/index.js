@@ -1,22 +1,24 @@
 import React, { PureComponent } from 'react'
-import TabManagement from './tabManager'
+import tabManagement from './tabManager'
 
-const TabManagerWrapper = (ComposedComponent, tabData) => {
+export const TabManager = tabManagement
+
+export const TabManagerWrapper = (ComposedComponent, tabData) => {
   class TabManagerWrapperComponent extends PureComponent {
     constructor (props) {
       super(props)
-      this.tabManager = TabManagement()
+      this.tabManager = tabManagement()
       this.tabData = this.tabManager.newTab(tabData || {})
     }
 
     componentDidMount () {
-      document.addEventListener('onbeforeunload', () => {
+      window.addEventListener('onbeforeunload', () => {
         this.tabManager.removeTab(this.tabData.id)
       })
     }
 
     componentWillUnmount () {
-      document.removeEventListener('onbeforeunload', () => {
+      window.removeEventListener('onbeforeunload', () => {
         this.tabManager.removeTab(this.tabData.id)
       })
     }
@@ -28,6 +30,4 @@ const TabManagerWrapper = (ComposedComponent, tabData) => {
 
   return TabManagerWrapperComponent
 }
-
-export default TabManagerWrapper
 
