@@ -1,7 +1,8 @@
 # browsers/tabs-manager
 A JS library for browser/tab management system. 
 
-**Version 0.0.2** 
+**From version 1.2.3** 
+This package help you to manage your browsers/tabs which is on your react web app. 
 
 ## How it works
 ```javascript
