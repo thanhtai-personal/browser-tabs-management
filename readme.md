@@ -19,27 +19,39 @@ export default TabManagerWrapper(HelloWorld)
 ```
 If you want to customize the tab data:
 ```javascript
-import TabManagerWrapper from 'window-tabs-management'
-import React from 'react'
-
-const defaultTabData = {
-  name: 'hello world',
-  key: 'hello world'
+import React from 'react';
+import logo from './logo.svg';
+import './App.css';
+import { TabManagerWrapper, TabManager } from 'window-tabs-management'
+const defaultData = {
+  isActive: false
 }
 
-class HelloWorld extends React.Component {
-  constructor (props) {
-    super (props)
-  }
+function App() {
+  return (
+    <div className="App">
+      <header className="App-header">
+        <img src={logo} className="App-logo" alt="logo" />
+        <p>
+          Edit <code>src/App.js</code> and save to reload.
+        </p>
+        <a
+          className="App-link"
+          href="https://reactjs.org"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Learn React
+        </a>
+      </header>
+    </div>
+  );
+}
 
-  render () {
-    console.log(this.props)
-    /**
-     * output is an object {
-      tabData =  {
-        id: <<tab_id>>,
-        ...defaultTabData
-      },
+export default TabManagerWrapper(App, defaultData);
+/**
+     *
+      let tabManager = TabManager()
       tabManager = {
         newTab: <<A function help you to add new tab to tabs list.>>
         getTab: <<A function help you to get tab data from tabs list.>>,
@@ -49,22 +61,17 @@ class HelloWorld extends React.Component {
       }
       Function Example: 
       ---newTab
-        let tab = this.props.tabManager.newTab({})
+        let tab = this.props.tabManager.newTab(defaultData)
       ---getTab
-        let tab = this.props.tabManager.getTab(id)
+        let tab = this.props.tabManager.getTab(tabId)
       ---removeTab
-        this.props.tabManager.removeTab(id)
+        this.props.tabManager.removeTab(tabId)
       ---getTabList
         let tabList = this.props.tabManager.getTabList()
       ---setTab
-        let tab = this.props.tabManager.setTab(id, data)
+        let tab = this.props.tabManager.setTab(tabId, <<data as an object>>)
     }
     */
-    return 'hello world'
-  }
-}
-
-export default TabManagerWrapper(HelloWorld, defaultTabData)
 ```
 That's all of my first npm package :).
 

@@ -1,5 +1,10 @@
 const TabManagement = () => {
 
+  const errorString = {
+    tabNotFound: 'tab not found!',
+    removeFailed: 'Remove failed'
+  }
+
   const dataKeys = {
     tabsManagement: 'tabs-management',
     privateKeys: ['id']
@@ -14,9 +19,21 @@ const TabManagement = () => {
     return tabList
   }
 
+  const setTabList = (data) => {
+    let tabsManagement = JSON.parse(window.localStorage.getItem(dataKeys.tabsManagement))
+    if (!tabsManagement) {
+      tabsManagement = {}
+    }
+    tabsManagement.tabList = data
+    window.localStorage.setItem(dataKeys.tabsManagement, JSON.stringify(tabsManagement))
+  }
+
   const newTab = (data) => {
+    let now = new Date()
+    let date = `${now.getFullYear().toString()}_${(now.getMonth() + 1)}_${now.getDate()}`
+    let time = `${now.getHours()}_${now.getMinutes()}_${now.getSeconds()}_${now.getMilliseconds()}`
     let tabData = {
-      id: new Date()
+      id: `${date}_${time}`
     }
     if (data && typeof data === 'object') {
       Object.keys(data).forEach((key) => {
@@ -25,15 +42,17 @@ const TabManagement = () => {
     }
     let tabList = getTabList()
     tabList.push(tabData)
-    window.localStorage.setItem(dataKeys.tabsManagement, JSON.stringify({ ...JSON.parse(window.localStorage.getItem(dataKeys.tabsManagement)), tabList: tabList }))
+    setTabList(tabList)
     return tabData
   }
+
 
   const removeTab = (id) => {
     let tabList = getTabList()
     let tabIndex = tabList.findIndex((tab) => tab.id === id)
     if (tabIndex >= 0) tabList.splice(tabIndex, 1)
-    window.localStorage.setItem(dataKeys.tabsManagement, JSON.stringify({ ...JSON.parse(window.localStorage.getItem(dataKeys.tabsManagement)), tabList: tabList }))
+    else console.error(`${errorString.removeFailed}-${errorString.tabNotFound}`)
+    setTabList(tabList)
   } 
 
   const getTab = (id) => {
@@ -53,9 +72,10 @@ const TabManagement = () => {
         })
       }
       tabList[tabIndex] = tab
-      window.localStorage.setItem(dataKeys.tabsManagement, JSON.stringify({ ...JSON.parse(window.localStorage.getItem(dataKeys.tabsManagement)), tabList: tabList }))
+      setTabList(tabList)
+      return tab
     }
-    return tab
+    return
   }
 
   return {
