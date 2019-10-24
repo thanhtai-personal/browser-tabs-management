@@ -1,9 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-const title = 'tab-management-lib';
-import TabManagerWrapper from './index'
+import AppRoot from './appRoot'
 
 ReactDOM.render(
-  TabManagerWrapper(<div>{title}</div>),
+  <AppRoot />,
   document.getElementById('app')
 );

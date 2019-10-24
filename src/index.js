@@ -1,12 +1,11 @@
 import React, { PureComponent } from 'react'
-import ReactDOM from 'react-dom'
-import TabManager from './tabManager'
+import TabManagement from './tabManager'
 
 const TabManagerWrapper = (ComposedComponent, tabData) => {
   class TabManagerWrapperComponent extends PureComponent {
     constructor (props) {
       super(props)
-      this.tabManager = new TabManager()
+      this.tabManager = TabManagement()
       this.tabData = this.tabManager.newTab(tabData || {})
     }
 

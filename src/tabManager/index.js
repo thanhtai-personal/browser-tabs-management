@@ -5,9 +5,10 @@ const TabManagement = () => {
     privateKeys: ['id']
   }
 
-  let { tabList } = JSON.parse(window.localStorage.getItem(dataKeys.tabsManagement))
-  if (!tabList) {
-    tabList = []
+  let data = JSON.parse(window.localStorage.getItem(dataKeys.tabsManagement))
+  let tabList = []
+  if (data && data.tabList) {
+    tabList = data.tabList
   }
 
   const getTabList = () => {
