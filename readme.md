@@ -4,20 +4,6 @@ A JS library for browser/tab management system.
 **Version 0.0.2** 
 
 ## How it works
-
-```javascript
-import TabManagerWrapper from 'window-tabs-management'
-import React from 'react'
-
-class HelloWorld extends React.Component {
-  render () {
-    return 'hello world'
-  }
-}
-
-export default TabManagerWrapper(HelloWorld)
-```
-If you want to customize the tab data:
 ```javascript
 import React from 'react';
 import logo from './logo.svg';
