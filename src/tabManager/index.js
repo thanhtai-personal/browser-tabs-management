@@ -7,25 +7,47 @@ const TabManagement = () => {
 
   const dataKeys = {
     tabsManagement: 'tabs-management',
-    privateKeys: ['id']
+    privateKeys: ['id'],
+    tabList: 'tabList',
+    updatedTime: 'updatedTime'
+  }
+
+  const privateDataKey = [dataKeys.tabList]
+
+  const getData = (key) => {
+    let managerData = JSON.parse(window.localStorage.getItem(dataKeys.tabsManagement))
+    if (managerData && key) {
+      return managerData[key]
+    }
+    return managerData
+  }
+
+
+  const setManagerData = (listData) => {
+    let tabManagerData = getData()
+    if (!tabManagerData) {
+      tabManagerData = {}
+    }
+    listData.forEach((data) => {
+      if (!privateDataKey.includes(data.key)) {
+        tabManagerData[data.key] = data.value
+      }
+    })
+    window.localStorage.setItem(dataKeys.tabsManagement, JSON.stringify(tabManagerData))
+    return tabManagerData
   }
 
   const getTabList = () => {
-    let data = JSON.parse(window.localStorage.getItem(dataKeys.tabsManagement))
-    let tabList = []
-    if (data && data.tabList) {
-      tabList = data.tabList
-    }
-    return tabList
+    return getData(dataKeys.tabList) || []
   }
 
   const setTabList = (data) => {
-    let tabsManagement = JSON.parse(window.localStorage.getItem(dataKeys.tabsManagement))
-    if (!tabsManagement) {
-      tabsManagement = {}
+    let tabManagerData = getData()
+    if (!tabManagerData) {
+      tabManagerData = {}
     }
-    tabsManagement.tabList = data
-    window.localStorage.setItem(dataKeys.tabsManagement, JSON.stringify(tabsManagement))
+    tabManagerData[dataKeys.tabList] = data || []
+    window.localStorage.setItem(dataKeys.tabsManagement, JSON.stringify(tabManagerData))
   }
 
   const newTab = (data) => {
@@ -33,7 +55,7 @@ const TabManagement = () => {
     let date = `${now.getFullYear().toString()}_${(now.getMonth() + 1)}_${now.getDate()}`
     let time = `${now.getHours()}_${now.getMinutes()}_${now.getSeconds()}_${now.getMilliseconds()}`
     let tabData = {
-      id: `${date}_${time}`
+      id: `tab_id_${date}_${time}`
     }
     if (data && typeof data === 'object') {
       Object.keys(data).forEach((key) => {
@@ -53,7 +75,7 @@ const TabManagement = () => {
     if (tabIndex >= 0) tabList.splice(tabIndex, 1)
     else console.error(`${errorString.removeFailed}-${errorString.tabNotFound}`)
     setTabList(tabList)
-  } 
+  }
 
   const getTab = (id) => {
     return getTabList().find((tab) => tab.id === id)
@@ -78,12 +100,32 @@ const TabManagement = () => {
     return
   }
 
+  const emit = (key, value) => {
+    if (key) {
+      setManagerData([{ key: key, value: value || '' }])
+    } else {
+      setManagerData([{ key: dataKeys.updatedTime, value: new Date() }])
+    }
+  }
+
+  const addTabListener = (callBack) => {
+    window.addEventListener('storage', typeof callBack === 'function' ? callBack 
+      : () => {
+        console.log('====Received message with no action')
+      }
+    )
+  }
+
   return {
     newTab: newTab,
     getTab: getTab,
     removeTab: removeTab,
     getTabList: getTabList,
-    setTab: setTab
+    setTab: setTab,
+    setManagerData: setManagerData,
+    getData: getData,
+    emit: emit,
+    addTabListener: addTabListener
   }
 }
 

@@ -36,31 +36,54 @@ function App() {
 }
 
 export default TabManagerWrapper(App, defaultData);
-/**
-     *
-      let tabManager = TabManager()
+```
+
+TabManager functions support
+```javascript
+    import { TabManager } from 'window-tabs-management'
+    let tabManager = TabManager()
       tabManager = {
-        newTab: <<A function help you to add new tab to tabs list.>>
+        newTab: <<A function help you to add new tab to tabs list.>>,
         getTab: <<A function help you to get tab data from tabs list.>>,
         removeTab: <<A function help you to remove a tab to tabs list.>>,
         getTabList: <<A function help you to get tabs list data.>>,
-        setTab: <<A function help you to update data of a tab.>>
+        setTab: <<A function help you to update data of a tab.>>,
+        setManagerData: <<set data with key and value>>,
+        getData: <<get data with key>>,
+        emit: <<emit to other tab - tab emit does not listen this message>>,
+        addTabListener: <<add listener to tab to listen from emit>>
       }
-      Function Example: 
-      ---newTab
-        let tab = this.props.tabManager.newTab(defaultData)
-      ---getTab
-        let tab = this.props.tabManager.getTab(tabId)
-      ---removeTab
-        this.props.tabManager.removeTab(tabId)
-      ---getTabList
-        let tabList = this.props.tabManager.getTabList()
-      ---setTab
-        let tab = this.props.tabManager.setTab(tabId, <<data as an object>>)
-    }
-    */
+      //Function Example: 
+      ////newTab
+        let tab = tabManager.newTab(defaultData)
+      ////getTab
+        let tab = tabManager.getTab(tabId)
+      ////removeTab
+        tabManager.removeTab(tabId)
+      ////getTabList
+        let tabList = tabManager.getTabList()
+      ////setTab
+        let tab = tabManager.setTab(tabId, { isActive: true })
+      ////setManagerData
+        setManagerData([{key: 'isRedirect', value: false}, {key: 'isLoggedOut', value: false}])
+        //--> cannot replace tablist
+      ////getData
+        let data = tabManager.getData() // get all data
+        let data = tabManager.getData('tabList') //get tabList - can be null or undefined
+      ////emit
+        tabManager.emit() // send message to other tab
+        tabManager.emit('isRedirect', true) // change data and send message to other tab
+      ////addTabListener
+        tabManager.addTabListener(() => {
+          let isRedirect = tabManager.getData('isRedirect')
+          if (isRedirect) {
+            window.location.replace('https://tttgalaxy.co.uk')
+          }
+        })
 ```
-That's all of my first npm package :).
+Get more in my example: https://github.com/thanhtai-personal/tabmanager-example
+
+That's all.
 
 **Note.**
 ** TabManagerWrapper helped you to create tab data when you load your component and then remove tab data when you close your tab.
