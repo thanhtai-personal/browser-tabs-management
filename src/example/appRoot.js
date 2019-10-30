@@ -7,4 +7,4 @@ class AppRoot extends Component {
   }
 }
 
-export default TabManagerWrapper(AppRoot, {})
+export default TabManagerWrapper(AppRoot, 'example-app',{})

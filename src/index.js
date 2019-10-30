@@ -3,11 +3,11 @@ import tabManagement from './tabManager'
 
 export const TabManager = tabManagement
 
-export const TabManagerWrapper = (ComposedComponent, tabData) => {
+export const TabManagerWrapper = (ComposedComponent, appKey, tabData) => {
   class TabManagerWrapperComponent extends PureComponent {
     constructor (props) {
       super(props)
-      this.tabManager = tabManagement()
+      this.tabManager = tabManagement(appKey)
       this.tabData = this.tabManager.newTab(tabData || {})
     }
 

@@ -1,4 +1,4 @@
-const TabManagement = () => {
+const TabManagement = (appKey) => {
 
   const errorString = {
     tabNotFound: 'tab not found!',
@@ -6,7 +6,7 @@ const TabManagement = () => {
   }
 
   const dataKeys = {
-    tabsManagement: 'tabs-management',
+    tabsManagement: `tabs-management-${appKey}`,
     privateKeys: ['id'],
     tabList: 'tabList',
     updatedTime: 'updatedTime'
@@ -109,8 +109,9 @@ const TabManagement = () => {
   }
 
   const addTabListener = (callBack) => {
-    window.addEventListener('storage', typeof callBack === 'function' ? callBack 
-      : () => {
+    window.addEventListener('storage', typeof callBack === 'function' ? (event) => { 
+      callBack(event)
+    } : () => {
         console.log('====Received message with no action')
       }
     )

@@ -1,7 +1,9 @@
 # browsers/tabs-manager
 A JS library for browser/tab management system. 
 
-**From version 1.2.3** 
+**Lastest version 1.3.1** 
+**Last issue fixed: Conflict data multi application.
+
 This package help you to manage your browsers/tabs which is on your react web app. 
 
 ## How it works
@@ -35,13 +37,13 @@ function App() {
   );
 }
 
-export default TabManagerWrapper(App, defaultData);
+export default TabManagerWrapper(App, 'my-app-key', defaultData);
 ```
 
 TabManager functions support
 ```javascript
     import { TabManager } from 'window-tabs-management'
-    let tabManager = TabManager()
+    let tabManager = TabManager('my-app-key')
       tabManager = {
         newTab: <<A function help you to add new tab to tabs list.>>,
         getTab: <<A function help you to get tab data from tabs list.>>,
