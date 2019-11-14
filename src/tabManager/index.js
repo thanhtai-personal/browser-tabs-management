@@ -113,7 +113,11 @@ const TabManagement = (appKey) => {
 
   const scanInactiveTab = (callBack) => {
     let tabList = getTabList()
-    let tabId = getData(dataKeys.tabScan)
+    let tabScan = JSON.parse(window.localStorage.getItem(dataKeys.tabScan)) || []
+    let tabId = ''
+    if (tabScan.length > 0) {
+      tabId = tabScan[tabScan.length - 1]
+    }
     tabList.forEach(tab => {
       setTab(tab.id, [{ key: dataKeys.isOnline, value: onlineState.inactive }])
     })
@@ -131,6 +135,7 @@ const TabManagement = (appKey) => {
       })
       typeof callBack === 'function' && callBack()
       setManagerData([{ key: dataKeys.isScan, value: false }])
+      window.localStorage.setItem(dataKeys.tabScan, JSON.stringify([]))
     }, scanTime)
   }
 
@@ -147,10 +152,10 @@ const TabManagement = (appKey) => {
       })
     }
     window.localStorage.setItem(tabData.id, JSON.stringify(tabData))
-    setManagerData([{ key: dataKeys.tabScan, value: tabData.id }])
-    setTimeout(() => {
-      scanInactiveTab()
-    }, 500)
+    let tabScan = JSON.parse(window.localStorage.getItem(dataKeys.tabScan)) || []
+    tabScan.push(tabData.id)
+    window.localStorage.setItem(dataKeys.tabScan, JSON.stringify(tabScan))
+    scanInactiveTab()
     typeof callBack === 'function' && callBack()
     return tabData
   }
@@ -162,14 +167,14 @@ const TabManagement = (appKey) => {
     removeTabListener((event) => {
       let oldValue = {}, newValue = {} 
       try {
-        oldValue = e.oldValue ? JSON.parse(e.oldValue) : {}
+        oldValue = event.oldValue ? JSON.parse(event.oldValue) : {}
       } catch (error) {
-        oldValue = e.oldValue
+        oldValue = event.oldValue
       }
       try {
-        newValue = e.newValue ? JSON.parse(e.newValue) : {}
+        newValue = event.newValue ? JSON.parse(event.newValue) : {}
       } catch (error) {
-        newValue = e.newValue
+        newValue = event.newValue
       }
       if (event.key === dataKeys.tabsManagement) {
         if (oldValue[dataKeys.isScan] !== newValue[dataKeys.isScan]
@@ -188,14 +193,14 @@ const TabManagement = (appKey) => {
     addTabListener((event) => {
       let oldValue = {}, newValue = {} 
       try {
-        oldValue = e.oldValue ? JSON.parse(e.oldValue) : {}
+        oldValue = event.oldValue ? JSON.parse(event.oldValue) : {}
       } catch (error) {
-        oldValue = e.oldValue
+        oldValue = event.oldValue
       }
       try {
-        newValue = e.newValue ? JSON.parse(e.newValue) : {}
+        newValue = event.newValue ? JSON.parse(event.newValue) : {}
       } catch (error) {
-        newValue = e.newValue
+        newValue = event.newValue
       }
       if (event.key === dataKeys.tabsManagement) {
         if (oldValue[dataKeys.isScan] !== newValue[dataKeys.isScan]
