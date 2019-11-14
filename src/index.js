@@ -12,15 +12,11 @@ export const TabManagerWrapper = (ComposedComponent, appKey, tabData) => {
     }
 
     componentDidMount () {
-      window.addEventListener('beforeunload', () => {
-        this.tabManager.removeTab(this.tabData.id)
-      })
+      this.tabManager.didMount(this.tabManager.getTab(this.tabManager.id))
     }
 
     componentWillUnmount () {
-      window.removeEventListener('beforeunload', () => {
-        this.tabManager.removeTab(this.tabData.id)
-      })
+      this.tabManager.unMount(this.tabManager.getTab(this.tabManager.id))
     }
 
     render () {

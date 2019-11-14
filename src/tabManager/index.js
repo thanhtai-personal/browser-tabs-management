@@ -1,18 +1,22 @@
 const TabManagement = (appKey) => {
 
-  const errorString = {
-    tabNotFound: 'tab not found!',
-    removeFailed: 'Remove failed'
+  const scanTime = 3000
+
+  const onlineState = {
+    inactive: 'inactive',
+    active: 'active'
   }
 
   const dataKeys = {
     tabsManagement: `tabs-management-${appKey}`,
     privateKeys: ['id'],
-    tabList: 'tabList',
-    updatedTime: 'updatedTime'
+    updatedTime: 'updatedTime',
+    tabPrefix: 'npm-windows-tab',
+    isOnline: 'isOnline',
+    isScan: 'isScan'
   }
 
-  const privateDataKey = [dataKeys.tabList]
+  const privateDataKey = [dataKeys.isOnline]
 
   const getData = (key) => {
     let managerData = JSON.parse(window.localStorage.getItem(dataKeys.tabsManagement))
@@ -23,7 +27,7 @@ const TabManagement = (appKey) => {
   }
 
 
-  const setManagerData = (listData) => {
+  const setManagerData = (listData, callBack) => {
     let tabManagerData = getData()
     if (!tabManagerData) {
       tabManagerData = {}
@@ -34,70 +38,15 @@ const TabManagement = (appKey) => {
       }
     })
     window.localStorage.setItem(dataKeys.tabsManagement, JSON.stringify(tabManagerData))
+    typeof callBack === 'function' && callBack()
     return tabManagerData
   }
 
   const getTabList = () => {
-    return getData(dataKeys.tabList) || []
-  }
-
-  const setTabList = (data) => {
-    let tabManagerData = getData()
-    if (!tabManagerData) {
-      tabManagerData = {}
-    }
-    tabManagerData[dataKeys.tabList] = data || []
-    window.localStorage.setItem(dataKeys.tabsManagement, JSON.stringify(tabManagerData))
-  }
-
-  const newTab = (data) => {
-    let now = new Date()
-    let date = `${now.getFullYear().toString()}_${(now.getMonth() + 1)}_${now.getDate()}`
-    let time = `${now.getHours()}_${now.getMinutes()}_${now.getSeconds()}_${now.getMilliseconds()}`
-    let tabData = {
-      id: `tab_id_${date}_${time}`
-    }
-    if (data && typeof data === 'object') {
-      Object.keys(data).forEach((key) => {
-        if (!dataKeys.privateKeys.includes(key)) tabData[key] = data[key]
-      })
-    }
-    let tabList = getTabList()
-    tabList.push(tabData)
-    setTabList(tabList)
-    return tabData
-  }
-
-
-  const removeTab = (id) => {
-    let tabList = getTabList()
-    let tabIndex = tabList.findIndex((tab) => tab.id === id)
-    if (tabIndex >= 0) tabList.splice(tabIndex, 1)
-    else console.error(`${errorString.removeFailed}-${errorString.tabNotFound}`)
-    setTabList(tabList)
-  }
-
-  const getTab = (id) => {
-    return getTabList().find((tab) => tab.id === id)
-  }
-
-  const setTab = (id, data) => {
-    let tabList = getTabList()
-    let tabIndex = tabList.findIndex((tab) => tab.id === id)
-    if (tabIndex >= 0) {
-      let tab = Object.assign({}, tabList[tabIndex])
-      if (data && typeof data === 'object') {
-        Object.keys(data).forEach((key) => {
-          if (!dataKeys.privateKeys.includes(key)) {
-            tab[key] = data[key]
-          }
-        })
-      }
-      tabList[tabIndex] = tab
-      setTabList(tabList)
-      return tab
-    }
-    return
+    let tabs = Object.keys(window.localStorage).some((key) => key.includes(dataKeys.tabPrefix)) || []
+    return tabs.map((tab) => {
+      return JSON.parse(tab)
+    })
   }
 
   const emit = (key, value) => {
@@ -109,24 +58,156 @@ const TabManagement = (appKey) => {
   }
 
   const addTabListener = (callBack) => {
-    window.addEventListener('storage', typeof callBack === 'function' ? (event) => { 
+    let onStorage = typeof callBack === 'function' ? (event) => {
       callBack(event)
     } : () => {
-        console.log('====Received message with no action')
+      console.log('====Received message with no action')
+    }
+    window.addEventListener('storage', onStorage)
+  }
+
+  const removeTabListener  = (callBack) => {
+    let onStorage = typeof callBack === 'function' ? (event) => {
+      callBack(event)
+    } : () => {
+      console.log('====Received message with no action')
+    }
+    window.removeEventListener('storage', onStorage)
+  }
+
+  const getNow = () => {
+    let now = new Date()
+    let date = `${now.getFullYear().toString()}_${(now.getMonth() + 1)}_${now.getDate()}`
+    let time = `${now.getHours()}_${now.getMinutes()}_${now.getSeconds()}_${now.getMilliseconds()}`
+    return {
+      value: now,
+      valueString: `${date}_${time}`
+    }
+  }
+
+  const newTab = (data , callBack) => {
+    let tabData = {
+      id: `${dataKeys.tabPrefix}_${getNow().valueString}`,
+      isOnline: true
+    }
+    if (data && typeof data === 'object') {
+      Object.keys(data).forEach((key) => {
+        if (!dataKeys.privateKeys.includes(key)) tabData[key] = data[key]
+      })
+    }
+    window.localStorage.setItem(tabData.id, JSON.stringify(tabData))
+    typeof callBack === 'function' && callBack()
+    return tabData
+  }
+
+
+  const removeTab = (id, callBack) => {
+    window.localStorage.removeItem(id)
+    typeof callBack === 'function' && callBack()
+  }
+
+  const getTab = (id) => {
+    return window.localStorage.getItem(id)
+  }
+
+  const setTab = (id, data, callBack) => {
+    let tab = getTab(id) || {}
+    Object.keys(data).forEach((key) => {
+      if (!dataKeys.privateKeys.includes(key)) {
+        tab[key] = data[key]
       }
-    )
+    })
+    window.localStorage.setItem(tab.id, JSON.stringify(tab))
+    typeof callBack === 'function' && callBack()
+    return tab
+  }
+
+  const scanInactiveTab = (callBack) => {
+    let tabList = getTabList()
+    tabList.forEach(tab => {
+      setTab(tab.id, [{ key: dataKeys.isOnline, value: onlineState.inactive }])
+    })
+    setManagerData([{ key: dataKeys.isScan, value: true }])
+    setTimeout(() => {
+      tabList = getTabList()
+      tabList.forEach((tab) => {
+        if (tab[dataKeys.isOnline] === onlineState.inactive) {
+          removeTab(tab.id)
+        } else {
+          setTab(tab.id, [{ key: dataKeys.isOnline, value: true }])
+        }
+      })
+      typeof callBack === 'function' && callBack()
+      setManagerData([{ key: dataKeys.isScan, value: false }])
+    }, scanTime)
+  }
+
+  const unMount = (tabData) => {
+    window.removeEventListener('beforeunload', () => {
+      removeTab(tabData.id)
+    })
+    removeTabListener((event) => {
+      let oldValue = {}, newValue = {} 
+      try {
+        oldValue = e.oldValue ? JSON.parse(e.oldValue) : {}
+      } catch (error) {
+        oldValue = e.oldValue
+      }
+      try {
+        newValue = e.newValue ? JSON.parse(e.newValue) : {}
+      } catch (error) {
+        newValue = e.newValue
+      }
+      if (event.key === dataKeys.tabsManagement) {
+        if (oldValue[dataKeys.isScan] !== newValue[dataKeys.isScan]
+           && getData(dataKeys.isScan)
+          ) {
+          setTab(tabData.id, [{ key: dataKeys.isOnline, value: onlineState.active }])
+        }
+      }
+    })
+  }
+
+  const didMount = (tabData) => {
+    window.addEventListener('beforeunload', () => {
+      removeTab(tabData.id)
+    })
+    addTabListener((event) => {
+      let oldValue = {}, newValue = {} 
+      try {
+        oldValue = e.oldValue ? JSON.parse(e.oldValue) : {}
+      } catch (error) {
+        oldValue = e.oldValue
+      }
+      try {
+        newValue = e.newValue ? JSON.parse(e.newValue) : {}
+      } catch (error) {
+        newValue = e.newValue
+      }
+      if (event.key === dataKeys.tabsManagement) {
+        if (oldValue[dataKeys.isScan] !== newValue[dataKeys.isScan]
+           && getData(dataKeys.isScan)
+          ) {
+          setTab(tabData.id, [{ key: dataKeys.isOnline, value: onlineState.active }])
+        }
+      }
+    })
   }
 
   return {
-    newTab: newTab,
-    getTab: getTab,
-    removeTab: removeTab,
-    getTabList: getTabList,
-    setTab: setTab,
-    setManagerData: setManagerData,
-    getData: getData,
-    emit: emit,
-    addTabListener: addTabListener
+    newTab,
+    getTab,
+    removeTab,
+    getTabList,
+    setTab,
+    setManagerData,
+    getData,
+    emit,
+    addTabListener,
+    removeTabListener,
+    scanInactiveTab,
+    unMount,
+    didMount
   }
 }
 

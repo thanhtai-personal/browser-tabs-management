@@ -1,8 +1,8 @@
 # browsers/tabs-manager
 A JS library for browser/tab management system. 
 
-**Lastest version 1.3.1** 
-**Last issue fixed: Conflict data multi application.
+**Lastest version 1.4.0** 
+**Last issue fixed: lost data when browser crash unexptected
 
 This package help you to manage your browsers/tabs which is on your react web app. 
 
@@ -53,7 +53,11 @@ TabManager functions support
         setManagerData: <<set data with key and value>>,
         getData: <<get data with key>>,
         emit: <<emit to other tab - tab emit does not listen this message>>,
-        addTabListener: <<add listener to tab to listen from emit>>
+        addTabListener: <<add listener to tab to listen from emit>>,
+        removeTabListener: <<remove listener to tab to listen from emit>>,
+        scanInactiveTab: <<check online state od tab then remove if false>>,
+        unMount: <<auto remove data if called didMount before>>,
+        didMount: <<auto init listener>>
       }
       //Function Example: 
       ////newTab
@@ -82,6 +86,21 @@ TabManager functions support
             window.location.replace('https://tttgalaxy.co.uk')
           }
         })
+      ////removeTabListener,
+        tabManager.removeTabListener(() => {
+          let isRedirect = tabManager.getData('isRedirect')
+          if (isRedirect) {
+            window.location.replace('https://tttgalaxy.co.uk')
+          }
+        })
+      ////scanInactiveTab,
+        tabManager.scanInactiveTab(() => {
+          //call back after scanned
+        })
+      ////unMount,
+        tabManager.unMount(tabManager.getTab(tabData.id))
+      ////didMount
+        tabManager.didMount(tabManager.getTab(tabData.id))
 ```
 Get more in my example: https://github.com/thanhtai-personal/tabmanager-example
 
