@@ -120,7 +120,7 @@ const TabManagement = (appKey) => {
       return tab
     })
     tabList.forEach((tab) => {
-      setTab(tab.tabId, Object.keys(tab).map((key) => {
+      setTab(tab.id, Object.keys(tab).map((key) => {
         return {
           key: key,
           value: tab[key]
