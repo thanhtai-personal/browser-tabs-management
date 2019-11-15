@@ -1,7 +1,6 @@
 const TabManagement = (appKey) => {
 
   const scanTime = 3000
-  let isAutoScan = false
 
   const onlineState = {
     inactive: 'inactive',
@@ -9,7 +8,7 @@ const TabManagement = (appKey) => {
   }
 
   const dataKeys = {
-    tabsManagement: `tabs-management-${appKey}`,
+    tabsManagement: `${appKey}-tabs-management`,
     privateKeys: ['id'],
     updatedTime: 'updatedTime',
     tabPrefix: 'npm-windows-tab',
@@ -65,18 +64,14 @@ const TabManagement = (appKey) => {
   const addTabListener = (callBack) => {
     let onStorage = typeof callBack === 'function' ? (event) => {
       callBack(event)
-    } : () => {
-      console.log('====Received message with no action')
-    }
+    } : () => {}
     window.addEventListener('storage', onStorage)
   }
 
   const removeTabListener  = (callBack) => {
     let onStorage = typeof callBack === 'function' ? (event) => {
       callBack(event)
-    } : () => {
-      console.log('====Received message with no action')
-    }
+    } : () => {}
     window.removeEventListener('storage', onStorage)
   }
 
@@ -112,7 +107,7 @@ const TabManagement = (appKey) => {
     return tab
   }
 
-  const scanInactiveTab = (callBack) => {
+  const scanInactiveTab = (option, callBack) => {
     let tabList = getTabList()
     let tabScan = getData(dataKeys.tabScan) || []
     let tabId = tabScan !== [] ? tabScan[tabScan.length - 1] : ''
@@ -135,25 +130,42 @@ const TabManagement = (appKey) => {
     setManagerData([{ key: dataKeys.isScan, value: true }])
     let to = setTimeout(() => {
       tabList = getTabList()
+      let lostKeyData = false
       tabList.forEach((tab) => {
         if (tab[dataKeys.isOnline] === onlineState.inactive) {
           removeTab(tab.id)
+          if (option && option.isCheckLostKeyData) {
+            option.keyData.forEach(
+              (dat) => {
+                if(tab[dat.key] === dat.value) {
+                  lostKeyData = true
+                }
+              }
+            )
+          }
         } else {
           setTab(tab.id, [{ key: dataKeys.isOnline, value: true }])
         }
       })
-      typeof callBack === 'function' && callBack()
       setManagerData([{ key: dataKeys.isScan, value: false }
       , { key: dataKeys.tabScan, value: [] } ])
+      if (lostKeyData) {
+        tabList = getTabList() || []
+        if (tabList.length > 0) {
+          setTab(tabList[0].id, option.lostData.data || [])
+        }
+        typeof option.callBack === 'function' && option.callBack()
+      }
+      typeof callBack === 'function' && callBack(getTabList())
       clearTimeout(to)
     }, scanTime)
   }
 
   
 
-  const newTab = (data, isAutoScan, callBack) => {
+  const newTab = (data, callBack) => {
     let tabData = {
-      id: `${dataKeys.tabPrefix}_${getNow().valueString}`,
+      id: `${appKey}_${dataKeys.tabPrefix}_${getNow().valueString}`,
       isOnline: true
     }
     if (data && typeof data === 'object') {
@@ -162,13 +174,6 @@ const TabManagement = (appKey) => {
       })
     }
     window.localStorage.setItem(tabData.id, JSON.stringify(tabData))
-    if (isAutoScan) {
-      isAutoScan = true
-      let tabScan = JSON.parse(window.localStorage.getItem(dataKeys.tabScan)) || []
-      tabScan.push(tabData.id)
-      window.localStorage.setItem(dataKeys.tabScan, JSON.stringify(tabScan))
-      scanInactiveTab()
-    }
     typeof callBack === 'function' && callBack()
     return tabData
   }
@@ -199,7 +204,7 @@ const TabManagement = (appKey) => {
     })
   }
 
-  const didMount = (tabData) => {
+  const didMount = (tabData, option) => {
     window.addEventListener('beforeunload', () => {
       removeTab(tabData.id)
     })
@@ -223,17 +228,15 @@ const TabManagement = (appKey) => {
         }
       }
     })
-    if (!isAutoScan) {
-      if (getData(dataKeys.isScan)) {
-        setTab(tabData.id, [{ key: dataKeys.isOnline, value: onlineState.active }])
-      } else {
-        let tabScan = getData(dataKeys.tabScan) || []
-        tabScan.push(tabData.id)
-        setManagerData([{ key: dataKeys.tabScan, value: tabScan }])
-        tabScan = getData(dataKeys.tabScan) || []
-        if (!_.isEmpty(tabScan) && tabData.id === tabScan[tabScan.length - 1]) {
-          scanInactiveTab()
-        }
+    if (getData(dataKeys.isScan)) {
+      setTab(tabData.id, [{ key: dataKeys.isOnline, value: onlineState.active }])
+    } else {
+      let tabScan = getData(dataKeys.tabScan) || []
+      tabScan.push(tabData.id)
+      setManagerData([{ key: dataKeys.tabScan, value: tabScan }])
+      tabScan = getData(dataKeys.tabScan) || []
+      if (!_.isEmpty(tabScan) && tabData.id === tabScan[tabScan.length - 1]) {
+        scanInactiveTab(option.scanData || {})
       }
     }
   }
@@ -251,8 +254,10 @@ const TabManagement = (appKey) => {
     removeTabListener,
     scanInactiveTab,
     unMount,
-    didMount
+    didMount,
+    dataKeys
   }
 }
 
 export default TabManagement
+
