@@ -119,14 +119,6 @@ const TabManagement = (appKey) => {
       }
       return tab
     })
-    tabList.forEach((tab) => {
-      setTab(tab.id, Object.keys(tab).map((key) => {
-        return {
-          key: key,
-          value: tab[key]
-        }
-      }))
-    })
     setManagerData([{ key: dataKeys.isScan, value: true }])
     let to = setTimeout(() => {
       tabList = getTabList()
