@@ -144,7 +144,7 @@ const TabManagement = (appKey) => {
       if (lostKeyData) {
         tabList = getTabList() || []
         if (tabList.length > 0) {
-          setTab(tabList[0].id, option.lostData.data || [])
+          setTab(tabList[0].id, option.keyData || [])
         }
         typeof option.callBack === 'function' && option.callBack()
       }
