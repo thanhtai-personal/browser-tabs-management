@@ -1,6 +1,7 @@
 const TabManagement = (appKey) => {
 
   const scanTime = 3000
+  const delayTime = 100
 
   const onlineState = {
     inactive: 'inactive',
@@ -14,7 +15,9 @@ const TabManagement = (appKey) => {
     tabPrefix: 'npm-windows-tab',
     isOnline: 'isOnline',
     isScan: 'isScan',
-    tabScan: 'tabScan'
+    tabScan: 'tabScan',
+    intervalId: 'intervalId',
+    scanTime: 'scanTime'
   }
 
   const privateDataKey = [dataKeys.isOnline]
@@ -96,7 +99,10 @@ const TabManagement = (appKey) => {
   }
 
   const setTab = (id, data, callBack) => {
-    let tab = getTab(id) || {}
+    let tab = getTab(id) || null
+    if (tab === null) {
+      return {}
+    }
     data.forEach((dat) => {
       if (!dataKeys.privateKeys.includes(dat.key)) {
         tab[dat.key] = dat.value
@@ -119,7 +125,7 @@ const TabManagement = (appKey) => {
       }
       return tab
     })
-    setManagerData([{ key: dataKeys.isScan, value: true }])
+    setManagerData([{ key: dataKeys.isScan, value: true }, { key: dataKeys.scanTime, value: getNow().value }])
     let to = setTimeout(() => {
       tabList = getTabList()
       let lostKeyData = false
@@ -194,6 +200,7 @@ const TabManagement = (appKey) => {
         }
       }
     })
+    clearInterval(tabData[dataKeys.intervalId])
   }
 
   const didMount = (tabData, option) => {
@@ -220,9 +227,7 @@ const TabManagement = (appKey) => {
         }
       }
     })
-    if (getData(dataKeys.isScan)) {
-      setTab(tabData.id, [{ key: dataKeys.isOnline, value: onlineState.active }])
-    } else {
+    const excuteScan = () => {
       let tabScan = getData(dataKeys.tabScan) || []
       tabScan.push(tabData.id)
       setManagerData([{ key: dataKeys.tabScan, value: tabScan }])
@@ -231,6 +236,22 @@ const TabManagement = (appKey) => {
         scanInactiveTab(option.scanData || {})
       }
     }
+    if (getData(dataKeys.isScan)) {
+      setTab(tabData.id, [{ key: dataKeys.isOnline, value: onlineState.active }])
+    } else {
+      excuteScan()
+    }
+    let intervalId = setInterval(() => {
+      if (getData(dataKeys.isScan)) {
+        let now = getNow().value
+        let scannedTime = new Date(getData(dataKeys.scanTime))
+        if (Math.abs(now - scannedTime) > scanTime + delayTime) {
+          setManagerData([{ key: dataKeys.isScan, value: false }])
+          excuteScan()
+        }
+      }
+    }, scanTime)
+    setTab(tabData.id, ([{ key: dataKeys.intervalId, value: intervalId }]))
   }
 
   return {
