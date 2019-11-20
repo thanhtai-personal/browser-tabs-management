@@ -12,11 +12,11 @@ export const TabManagerWrapper = (ComposedComponent, appKey, tabData) => {
     }
 
     componentDidMount () {
-      this.tabManager.didMount(this.tabManager.getTab(this.tabData.id))
+      this.tabManager.didMount(this.tabManager.getTab(this.tabData.id), {})
     }
 
     componentWillUnmount () {
-      this.tabManager.unMount(this.tabManager.getTab(this.tabData.id))
+      this.tabManager.unMount(this.tabManager.getTab(this.tabData.id), {})
     }
 
     render () {
